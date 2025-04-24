@@ -1,0 +1,7 @@
+[Unit]
+Description=tiup test cluster config monitor
+
+[Service]
+Type=oneshot
+WorkingDirectory=/mnt/mmc/sys
+ExecStart=/usr/bin/clamir-network-ip-apply -f /mnt/mmc/sys/secondIP -d eth0
