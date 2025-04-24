@@ -1,0 +1,8 @@
+[Unit]
+Description=tiup test cluster config monitor
+
+[Service]
+Type=oneshot
+WorkingDirectory=/mnt/mmc/sys
+ExecStart=/usr/bin/clamir-scc-util-convert-table -o /etc/clamir/scc_core_scale_default.dat -i /mnt/mmc/sys/table.nuc
+ExecStart=/usr/bin/clamir-scc-util-apply-scale -o /etc/clamir/scc_core_scale_default.dat -i /mnt/mmc/sys/table.nuc

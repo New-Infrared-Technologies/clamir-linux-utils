@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+import numpy as np
+import argparse
+import os, sys
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-t', "--type", help="input type", default="float")
+parser.add_argument('-i', "--input", help="input file", default="/mnt/mmc/sys/table.nuc")
+parser.add_argument('-o', "--output", help="output file", default="/etc/clamir/scc_core_scale_default.dat")
+
+args = parser.parse_args()
+
+if args.type:
+    if args.type == "float":
+        args.type = np.float32
+    else:
+        parser.print_help("Type is not supported ", args.type)
+        exit(1)
+
+try:
+    _ = os.stat(args.input)
+    input = np.fromfile(args.input, dtype=args.type, offset=8)
+    output = (16384 * input).astype(dtype=np.int32)
+
+    with open(args.output, "wb") as f:
+        os.write(f.fileno(), output)
+        exit(0)
+except:
+    parser.print_help("Failed to parse input file.")
+    exit(1)
