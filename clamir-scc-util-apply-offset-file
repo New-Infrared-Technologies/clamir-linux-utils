@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import numpy as np
+import argparse
+import os, sys
+import mmap
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-i', "--input", help="input file")
+parser.add_argument('-o', "--offset", help="address offset", default="0x4A000000")
+
+args = parser.parse_args()
+
+if args.offset:
+    try:
+        print(args.offset[2:])
+        args.offset = int(args.offset[2:], base=16)
+    except Exception as e:
+        print("Failed to parse offset {}".format(e))
+        parser.print_help()
+        exit(1)
+
+
+if args.input:
+    try:
+        with open("/dev/mem", mode="+wb") as fd:
+            with mmap.mmap(fd.fileno(), args.offset, flags=mmap.MAP_SHARED, prot=mmap.ACCESS_READ | mmap.ACCESS_WRITE, access= mmap.ACCESS_DEFAULT, offset=0x4A000000) as mm:
+                with open(args.input, "r") as f:
+                    buffer = f.buffer.read()
+                    mm.write(buffer)
+    except Exception as e:
+        print('Failed to apply scale file at address {} with file {}'.format(hex(args.offset), args.input))
+        print('Exception: {}'.format(e))
+        parser.print_help()
+        exit(1)
