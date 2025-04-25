@@ -21,12 +21,28 @@ if args.type:
 
 try:
     _ = os.stat(args.input)
-    input = np.fromfile(args.input, dtype=args.type, offset=8)
-    output = (16384 * input).astype(dtype=np.int32)
 
-    with open(args.output, "wb") as f:
-        os.write(f.fileno(), output)
-        exit(0)
-except:
-    parser.print_help("Failed to parse input file.")
+    input = np.fromfile(args.input, dtype=args.type)
+
+    # Offset - 
+    # offset = float(input[1])
+    # scale = input[2:]
+    scale = float(input[1])
+    table = input[2:]
+
+    
+    scale_output = (scale * table).astype(dtype=np.int32)
+
+    # offset_output = (offset * np.ones((64,64))).astype(dtype=np.int32)
+
+    with open('scc_core_scale_default.dat', "wb") as f:
+        # os.write('scc_core_scale_default.dat', scale_output)
+        scale_output.tofile(f)
+
+    # with open('scc_core_offset_default.dat', "+wb") as f:
+        # os.write('scc_core_offset_default.dat', offset_output)
+        # offset_output.tofile(f)
+
+except Exception as e:
+    parser.print_help("Failed to parse input file. {}", e)
     exit(1)
