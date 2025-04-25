@@ -132,3 +132,21 @@ options:
   -v, --value VALUE    value
   -o, --offset OFFSET  address offset
 ```
+
+## clamir-scc-util-generate-correction-table
+
+Like generate uniform sequence, generate correction table script create the nuc in the interchangeable format .nuc
+with a header of format
+
+```
+[ header : vector<uint8> (constant value : 'NUCD') ][ scale : float32le ( default value: 1.0 ) ][ table : vector<float32, 4096> ( constant value: [] 1.0 ... 1.0 ] )]
+```
+
+```
+usage: clamir-scc-util-generate-correction-table [-h] [-v VALUE] [-o OUTPUT]
+
+options:
+  -h, --help           show this help message and exit
+  -v, --value VALUE    value
+  -o, --output OUTPUT  output file
+```
