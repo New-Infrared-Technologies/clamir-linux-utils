@@ -1,5 +1,5 @@
 [Path]
-PathModified=/mnt/mmc/sys/table.nuc
+PathModified=/mnt/mmc/sys/table_fw.nuc
 
 [Install]
 WantedBy=default.target
