@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('-t', "--type", help="input type", default="float")
 parser.add_argument('-i', "--input", help="input file", default="/mnt/mmc/sys/table.nuc")
-parser.add_argument('-o', "--output", help="output file", default="/etc/clamir/scc_core_scale_default.dat")
+parser.add_argument('-o', "--output", help="output file", default="/etc/clamir/conf/scc_core_scale_default.dat")
 
 args = parser.parse_args()
 
@@ -20,13 +20,27 @@ if args.type:
         exit(1)
 
 try:
+    print("Testing if input file exists")
     _ = os.stat(args.input)
+
+    print("Reading input file")
+
+    print("Reading table")
     input = np.fromfile(args.input, dtype=args.type, offset=8)
-    output = (16384 * input).astype(dtype=np.int32)
+
+    print("Reading scale")
+    input_scale = np.fromfile(args.input, dtype=args.type, offset=4, count=1)
+    print("input scale: ", input_scale)
+
+    print("Creating output")
+    output = (input_scale * (16384 * input)).astype(dtype=np.int32)
+
+    print("Wrinting output")
 
     with open(args.output, "wb") as f:
+        print("Writing NUC Table to file")
         os.write(f.fileno(), output)
-        exit(0)
+        print("Finish writing NUC table")
 except:
     parser.print_help("Failed to parse input file.")
     exit(1)

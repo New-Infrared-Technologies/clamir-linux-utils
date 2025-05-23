@@ -1,8 +1,12 @@
 [Unit]
-Description=tiup test cluster config monitor
+Description=CLAMIR SCC Util Apply NUC Table
 
 [Service]
 Type=oneshot
-WorkingDirectory=/mnt/mmc/sys
-ExecStart=/usr/bin/clamir-scc-util-convert-table -o /etc/clamir/scc_core_scale_default.dat -i /mnt/mmc/sys/table.nuc
-ExecStart=/usr/bin/clamir-scc-util-apply-scale -o /etc/clamir/scc_core_scale_default.dat -i /mnt/mmc/sys/table.nuc
+WorkingDirectory=/home/clamir
+ExecStart=/usr/bin/bash -c "/usr/bin/clamir-scc-util-convert-table -o /home/clamir/scc_core_scale_default.dat -i /mnt/mmc/sys/table_fw.nuc && /usr/bin/clamir-scc-util-apply-scale-file -i /home/clamir/scc_core_scale_default.dat"
+Restart=on-failure
+RestartSec=1
+
+[Install]
+WantedBy=default.target
