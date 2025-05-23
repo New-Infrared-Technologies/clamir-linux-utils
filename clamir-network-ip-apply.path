@@ -1,0 +1,5 @@
+[Path]
+PathModified=/mnt/mmc/sys/secondIP
+
+[Install]
+WantedBy=default.target

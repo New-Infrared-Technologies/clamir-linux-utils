@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+
+import argparse
+import os, sys
+import re
+import subprocess
+
+parser = argparse.ArgumentParser()
+
+rx = re.compile('([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)')
+
+parser.add_argument('-f', "--file", help="config file to be applied", default="/mnt/mmc/sys/secondIP")
+parser.add_argument('-d', "--dev", help="device", default="eth0")
+
+args = parser.parse_args()
+
+def get_ips(dev):
+    result = subprocess.run('ip addr show dev {}'.format(dev), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, shell=True)
+    rx = re.compile('inet ([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)')
+    res = []
+    for l in result.stdout.splitlines():
+        
+        ips = rx.findall(l)
+        if (ips != []):
+            res.append(ips)
+
+    return res
+
+with open(args.file, "r") as f:
+    print("Reading ip from file {}".format(args.file))
+    for l in f.readlines():
+        res = rx.findall(l)
+        for ip in res:
+            print("IP has been found: {}".format(ip))
+            
+            if get_ips(args.dev).count(res) > 0:
+                print("ip already set {}".format(res))
+            else:
+                try:
+                    result = subprocess.run('ip addr add {}/24 dev {}'.format(ip, args.dev), stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True, shell=True)
+
+                    if (result.returncode != 0):
+                        raise Exception
+                    
+                except Exception as e:
+                    print('Failed to set ip {} in device {} with result: {}'.format(ip, args.dev, result.returncode))
